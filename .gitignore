@@ -2,4 +2,5 @@
 *.ez
 /build
 erl_crash.dump
-/input
+
+input/2025/
