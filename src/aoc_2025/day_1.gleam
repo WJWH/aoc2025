@@ -1,12 +1,8 @@
 import atto
 import atto/ops
-import atto/text
 import atto/text_util
-import gleam/dict
 import gleam/int
 import gleam/list
-import gleam/order
-import gleam/pair
 import gleam/result
 
 // import gleam/result
@@ -52,16 +48,13 @@ pub fn pt_1(input: List(Instruction)) {
   values_reached |> list.filter(fn(n) { n == 0 }) |> list.length
 }
 
-fn div_rem_100(x, y) {
-  todo
-}
-
 fn count_zero_crossings(
   value: Int,
   crossings_so_far: Int,
   instuctions: List(Instruction),
 ) {
   case instuctions {
+    // no more instructions left
     [] -> crossings_so_far
     [instruction, ..rest] ->
       case instruction {
@@ -108,8 +101,6 @@ fn count_zero_crossings(
       }
   }
 }
-
-// 6386 is too low
 
 pub fn pt_2(input: List(Instruction)) {
   count_zero_crossings(50, 0, input)
