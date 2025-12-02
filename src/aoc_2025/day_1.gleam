@@ -20,7 +20,7 @@ fn one_line() {
   atto.pure(case direction {
     "L" -> Left(how_far)
     "R" -> Right(how_far)
-    _ -> todo
+    _ -> panic as "Unknown direction"
   })
 }
 
@@ -39,7 +39,7 @@ fn scan_func(acc: Int, new: Instruction) -> Int {
   }
   case { int.modulo(new_value, 100) } {
     Ok(num) -> num
-    Error(_) -> todo
+    Error(_) -> panic as "modulo failed"
   }
 }
 
@@ -61,7 +61,7 @@ fn count_zero_crossings(
         Left(amount) -> {
           let new_value =
             int.modulo(value - amount, 100)
-            |> result.lazy_unwrap(fn() { todo })
+            |> result.lazy_unwrap(fn() { panic })
           let full_rotations = amount / 100
           let remaining_rotation = amount % 100
           let crossed_zero = case value {
@@ -83,7 +83,7 @@ fn count_zero_crossings(
         Right(amount:) -> {
           let new_value =
             int.modulo(value + amount, 100)
-            |> result.lazy_unwrap(fn() { todo })
+            |> result.lazy_unwrap(fn() { panic })
           let full_rotations = amount / 100
           let remaining_rotation = amount % 100
           let final_position = remaining_rotation + value
