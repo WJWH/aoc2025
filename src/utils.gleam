@@ -21,7 +21,7 @@ pub fn load_2d_grid_from_file(
   height,
 ) -> dict.Dict(#(Int, Int), String) {
   let coords = all_coords(width, height)
-  string.split(filecontents, ",")
+  string.split(filecontents, "\n")
   |> string.concat
   |> string.to_graphemes
   |> list.zip(coords, _)
@@ -31,6 +31,21 @@ pub fn load_2d_grid_from_file(
 pub fn neighbors(point) {
   case point {
     #(w, h) -> [#(w + 1, h), #(w - 1, h), #(w, h + 1), #(w, h - 1)]
+  }
+}
+
+pub fn neighbors_diagonal(point) {
+  case point {
+    #(w, h) -> [
+      #(w - 1, h),
+      #(w + 1, h),
+      #(w, h - 1),
+      #(w, h + 1),
+      #(w + 1, h - 1),
+      #(w + 1, h + 1),
+      #(w - 1, h - 1),
+      #(w - 1, h + 1),
+    ]
   }
 }
 
