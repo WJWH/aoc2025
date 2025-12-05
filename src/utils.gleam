@@ -76,5 +76,16 @@ pub fn file_lines(line_parser) {
 
 pub fn parse_file_lines(line_parser, input_string) {
   atto.run(file_lines(line_parser), text.new(input_string), Nil)
-  |> result.unwrap([])
+  |> result.lazy_unwrap(fn() { panic as "parsing failed" })
+}
+
+pub fn parse_file(some_parser, input_string) {
+  let result = atto.run(some_parser, text.new(input_string), Nil)
+  case result {
+    Ok(res) -> res
+    Error(err) -> {
+      echo err
+      panic as "parsing failed"
+    }
+  }
 }
