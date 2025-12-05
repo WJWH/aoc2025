@@ -3,6 +3,7 @@ import atto/ops
 import atto/text
 import atto/text_util
 import gleam/dict
+import gleam/int
 import gleam/list
 import gleam/option
 import gleam/result
@@ -65,6 +66,14 @@ fn increment(x) {
 
 pub fn tally(input: List(Int)) -> dict.Dict(Int, Int) {
   list.fold(input, dict.new(), fn(acc, new) { dict.upsert(acc, new, increment) })
+}
+
+pub fn parse_or_panic(input: String) -> Int {
+  let p = int.parse(input)
+  case p {
+    Ok(num) -> num
+    Error(_) -> panic as "parse failed"
+  }
 }
 
 // input file parsing
