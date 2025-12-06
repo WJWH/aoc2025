@@ -72,7 +72,10 @@ pub fn parse_or_panic(input: String) -> Int {
   let p = int.parse(input)
   case p {
     Ok(num) -> num
-    Error(_) -> panic as "parse failed"
+    Error(_) -> {
+      echo input
+      panic as "parse failed"
+    }
   }
 }
 
