@@ -69,14 +69,8 @@ pub fn tally(input: List(Int)) -> dict.Dict(Int, Int) {
 }
 
 pub fn parse_or_panic(input: String) -> Int {
-  let p = int.parse(input)
-  case p {
-    Ok(num) -> num
-    Error(_) -> {
-      echo input
-      panic as "parse failed"
-    }
-  }
+  let assert Ok(n) = int.parse(input)
+  n
 }
 
 // input file parsing

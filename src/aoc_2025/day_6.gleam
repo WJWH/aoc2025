@@ -4,13 +4,6 @@ import gleam/result
 import gleam/string
 import utils
 
-fn custom_fold(nums, start, op) {
-  case nums {
-    [] -> start
-    [new, ..rest] -> custom_fold(rest, op(start, new), op)
-  }
-}
-
 fn compute_answer(nums: List(String), op: String) -> Int {
   let #(operator, identity_element) = case op {
     "+" -> #(int.add, 0)
@@ -20,8 +13,7 @@ fn compute_answer(nums: List(String), op: String) -> Int {
 
   nums
   |> list.map(utils.parse_or_panic)
-  // |> list.fold(identity_element, operator)
-  |> custom_fold(identity_element, operator)
+  |> list.fold(identity_element, operator)
 }
 
 pub fn pt_1(input: String) {
@@ -59,7 +51,6 @@ fn convert_numbers(strs: List(List(String))) {
     list.reverse(n)
     |> string.concat
     |> string.trim
-    // |> utils.parse_or_panic
   })
 }
 
