@@ -73,6 +73,21 @@ pub fn parse_or_panic(input: String) -> Int {
   n
 }
 
+// shoelace algorithm:
+fn shoelace_determinant(points) {
+  let #(#(x1, y1), #(x2, y2)) = points
+  { x1 * y2 } - { x2 * y1 }
+}
+
+// https://en.wikipedia.org/wiki/Shoelace_formula
+fn shoelace(points: List(#(Int, Int))) {
+  // fn shoelace(points: List(#(Int, Int))) -> Result(Int, Nil) {
+  list.zip(points, list.drop(points, 1))
+  |> list.map(shoelace_determinant)
+  |> int.sum
+  |> int.divide(2)
+}
+
 // input file parsing
 pub fn file_lines(line_parser) {
   let lines = ops.sep(line_parser(), by: text_util.newline())
