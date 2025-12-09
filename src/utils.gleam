@@ -80,7 +80,7 @@ fn shoelace_determinant(points) {
 }
 
 // https://en.wikipedia.org/wiki/Shoelace_formula
-fn shoelace(points: List(#(Int, Int))) {
+pub fn shoelace(points: List(#(Int, Int))) {
   // fn shoelace(points: List(#(Int, Int))) -> Result(Int, Nil) {
   list.zip(points, list.drop(points, 1))
   |> list.map(shoelace_determinant)
