@@ -1,0 +1,35 @@
+; Test for day 10 part 2
+; buttons
+(declare-const b1 Int)
+(declare-const b2 Int)
+(declare-const b3 Int)
+(declare-const b4 Int)
+(declare-const b5 Int)
+(declare-const b6 Int)
+(assert (>= b1 0))
+(assert (>= b2 0))
+(assert (>= b3 0))
+(assert (>= b4 0))
+(assert (>= b5 0))
+(assert (>= b6 0))
+; targets
+(declare-const t1 Int)
+(declare-const t2 Int)
+(declare-const t3 Int)
+(declare-const t4 Int)
+(assert (= t1 3))
+(assert (= t2 5))
+(assert (= t3 4))
+(assert (= t4 7))
+(assert (= t1 (+ b5 b6)))
+(assert (= t2 (+ b2 b6)))
+(assert (= t3 (+ b3 b4 b5)))
+(assert (= t4 (+ b1 b2 b4)))
+; sum
+(declare-const total Int)
+(assert (= total (+ b1 b2 b3 b4 b5 b6)))
+; now compute!
+(minimize total)
+(check-sat)
+(get-objectives)
+
