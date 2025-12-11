@@ -2,11 +2,11 @@ import atto
 import atto/ops
 import atto/text
 import atto/text_util
+import gleam/bool
 import gleam/dict
 import gleam/int
 import gleam/list
 import gleam/option
-import gleam/result
 import gleam/string
 
 // utilities
@@ -57,10 +57,39 @@ pub type Direction {
   East
 }
 
-fn increment(x) {
+pub fn increment(x) {
   case x {
     option.Some(i) -> i + 1
     option.None -> 1
+  }
+}
+
+pub fn increment_by(x, n) {
+  case x {
+    option.Some(i) -> i + n
+    option.None -> n
+  }
+}
+
+pub fn list_add(x, new_element) {
+  case x {
+    option.Some(existing_list) -> [new_element, ..existing_list]
+    option.None -> [new_element]
+  }
+}
+
+pub fn decrement(x) {
+  case x {
+    option.Some(i) -> i + 1
+    // kind of weird default value here
+    option.None -> 0
+  }
+}
+
+pub fn toggle(x) {
+  case x {
+    option.Some(i) -> bool.negate(i)
+    option.None -> panic as "tried to toggle wrong index"
   }
 }
 
@@ -96,8 +125,14 @@ pub fn file_lines(line_parser) {
 }
 
 pub fn parse_file_lines(line_parser, input_string) {
-  atto.run(file_lines(line_parser), text.new(input_string), Nil)
-  |> result.lazy_unwrap(fn() { panic as "parsing failed" })
+  let result = atto.run(file_lines(line_parser), text.new(input_string), Nil)
+  case result {
+    Ok(res) -> res
+    Error(err) -> {
+      echo err
+      panic as "parsing failed"
+    }
+  }
 }
 
 pub fn parse_file(some_parser, input_string) {
