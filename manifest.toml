@@ -4,6 +4,7 @@
 packages = [
   { name = "argv", version = "1.0.2", build_tools = ["gleam"], requirements = [], otp_app = "argv", source = "hex", outer_checksum = "BA1FF0929525DEBA1CE67256E5ADF77A7CDDFE729E3E3F57A5BDCAA031DED09D" },
   { name = "atto", version = "1.2.1", build_tools = ["gleam"], requirements = ["gleam_regexp", "gleam_stdlib"], otp_app = "atto", source = "hex", outer_checksum = "B42C769B523CFCCE004E08DF3128F1060CB1AD1E6363022D1BB995DF43BAC138" },
+  { name = "child_process", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_otp", "gleam_stdlib", "splitter"], otp_app = "child_process", source = "hex", outer_checksum = "A4088E3D94072A7D9B810844FC52E1FBC3C554C3D1CEAA1BFBF0EF43873954F2" },
   { name = "envoy", version = "1.0.2", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "envoy", source = "hex", outer_checksum = "95FD059345AA982E89A0B6E2A3BF1CF43E17A7048DCD85B5B65D3B9E4E39D359" },
   { name = "filepath", version = "1.1.2", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "filepath", source = "hex", outer_checksum = "B06A9AF0BF10E51401D64B98E4B627F1D2E48C154967DA7AF4D0914780A6D40A" },
   { name = "gladvent", version = "2.2.1", build_tools = ["gleam"], requirements = ["argv", "envoy", "filepath", "gleam_erlang", "gleam_http", "gleam_httpc", "gleam_json", "gleam_otp", "gleam_package_interface", "gleam_stdlib", "glint", "parallel_map", "shellout", "simplifile", "snag", "spinner", "tom"], otp_app = "gladvent", source = "hex", outer_checksum = "82DCA16931B5950EEAEFB192524E52BC16D9BDDFCEB501ADAC5094430684440F" },
@@ -22,17 +23,20 @@ packages = [
   { name = "glearray", version = "2.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "glearray", source = "hex", outer_checksum = "5E272F7CB278CC05A929C58DEB58F5D5AC6DB5B879A681E71138658D0061C38A" },
   { name = "gleeunit", version = "1.6.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "gleeunit", source = "hex", outer_checksum = "FDC68A8C492B1E9B429249062CD9BAC9B5538C6FBF584817205D0998C42E1DAC" },
   { name = "glint", version = "1.2.1", build_tools = ["gleam"], requirements = ["gleam_community_ansi", "gleam_community_colour", "gleam_stdlib", "snag"], otp_app = "glint", source = "hex", outer_checksum = "2214C7CEFDE457CEE62140C3D4899B964E05236DA74E4243DFADF4AF29C382BB" },
+  { name = "iv", version = "1.3.3", build_tools = ["gleam"], requirements = ["gleam_stdlib", "gleam_yielder"], otp_app = "iv", source = "hex", outer_checksum = "F5A65B2BAB2747DEFEB756F7F1DF63D776F4445EE9679AE0A2442F73CAE68B13" },
   { name = "parallel_map", version = "3.0.2", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_stdlib", "gleam_yielder"], otp_app = "parallel_map", source = "hex", outer_checksum = "20E8EFFECA25D6061EE81A6E7C96C05783994D9E4191482B86DB13AA5618EEFA" },
   { name = "repeatedly", version = "2.1.2", build_tools = ["gleam"], requirements = [], otp_app = "repeatedly", source = "hex", outer_checksum = "93AE1938DDE0DC0F7034F32C1BF0D4E89ACEBA82198A1FE21F604E849DA5F589" },
   { name = "shellout", version = "1.7.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "shellout", source = "hex", outer_checksum = "1BDC03438FEB97A6AF3E396F4ABEB32BECF20DF2452EC9A8C0ACEB7BDDF70B14" },
   { name = "simplifile", version = "2.3.1", build_tools = ["gleam"], requirements = ["filepath", "gleam_stdlib"], otp_app = "simplifile", source = "hex", outer_checksum = "957E0E5B75927659F1D2A1B7B75D7B9BA96FAA8D0C53EA71C4AD9CD0C6B848F6" },
   { name = "snag", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "snag", source = "hex", outer_checksum = "7E9F06390040EB5FAB392CE642771484136F2EC103A92AE11BA898C8167E6E17" },
   { name = "spinner", version = "1.3.1", build_tools = ["gleam"], requirements = ["gleam_community_ansi", "gleam_stdlib", "glearray", "repeatedly"], otp_app = "spinner", source = "hex", outer_checksum = "21BDE7FF9D7D9ACBB4086C0D5C86F0A90CE6B0F3CB593B41D03384AE7724B5B4" },
+  { name = "splitter", version = "1.2.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "splitter", source = "hex", outer_checksum = "3DFD6B6C49E61EDAF6F7B27A42054A17CFF6CA2135FF553D0CB61C234D281DD0" },
   { name = "tom", version = "1.1.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "tom", source = "hex", outer_checksum = "0910EE688A713994515ACAF1F486A4F05752E585B9E3209D8F35A85B234C2719" },
 ]
 
 [requirements]
 atto = { version = ">= 1.2.1 and < 2.0.0" }
+child_process = { version = ">= 1.1.0 and < 2.0.0" }
 gladvent = { version = ">= 2.2.1 and < 3.0.0" }
 gleam_erlang = { version = ">= 1.3.0 and < 2.0.0" }
 gleam_otp = { version = ">= 1.2.0 and < 2.0.0" }
@@ -40,5 +44,6 @@ gleam_stdlib = { version = ">= 0.44.0 and < 2.0.0" }
 gleamy_structures = { version = ">= 1.2.0 and < 2.0.0" }
 glearray = { version = ">= 2.1.0 and < 3.0.0" }
 gleeunit = { version = ">= 1.0.0 and < 2.0.0" }
+iv = { version = ">= 1.3.3 and < 2.0.0" }
 parallel_map = { version = ">= 3.0.2 and < 4.0.0" }
 simplifile = { version = ">= 2.3.1 and < 3.0.0" }
