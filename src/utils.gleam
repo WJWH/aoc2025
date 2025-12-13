@@ -93,7 +93,7 @@ pub fn toggle(x) {
   }
 }
 
-pub fn tally(input: List(Int)) -> dict.Dict(Int, Int) {
+pub fn tally(input: List(a)) -> dict.Dict(a, Int) {
   list.fold(input, dict.new(), fn(acc, new) { dict.upsert(acc, new, increment) })
 }
 
