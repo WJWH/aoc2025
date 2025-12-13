@@ -1,77 +1,116 @@
+import atomic_array
+import gleam/bit_array
 import gleam/dict
-import gleam/erlang/atom.{type Atom}
 import gleam/int
 import gleam/list
 import gleam/result
 import gleam/string
 
 pub type Graph =
-  dict.Dict(Atom, List(Atom))
+  dict.Dict(Int, List(Int))
+
+fn str_id(label: String) -> Int {
+  let assert <<id:size(24)>> = bit_array.from_string(label)
+  id
+}
 
 fn single_line(str) {
   let assert [from, ..to] = string.split(str, " ")
-  #(atom.create(string.drop_end(from, 1)), list.map(to, atom.create))
+  #(str_id(string.drop_end(from, 1)), list.map(to, str_id))
 }
 
-pub fn parse(input: String) -> Graph {
+pub fn parse(input: String) -> #(Graph, atomic_array.AtomicArray) {
   let nodes = string.split(input, "\n") |> list.map(single_line)
-  list.fold(nodes, dict.new(), fn(acc, new) {
-    let #(from, to) = new
-    dict.insert(acc, from, to)
-  })
+  let graph =
+    list.fold(nodes, dict.new(), fn(acc, new) {
+      let #(from, to) = new
+      dict.insert(acc, from, to)
+    })
+  let cache = atomic_array.new_unsigned(16_777_215)
+  #(graph, cache)
 }
 
 // part 1
-// unmemoized version
-fn num_paths_to_out(graph, node) {
-  case node {
-    "out" -> 1
-    _ -> {
-      let paths_from_here = dict.get(graph, node) |> result.unwrap([])
-      list.map(paths_from_here, num_paths_to_out(graph, _))
-      |> int.sum()
-    }
-  }
-}
+// unmemoized version, commented out so I don't get an unused function warning every time
+// fn num_paths_to_out(graph, node) {
+//   case node {
+//     "out" -> 1
+//     _ -> {
+//       let paths_from_here = dict.get(graph, node) |> result.unwrap([])
+//       list.map(paths_from_here, num_paths_to_out(graph, _))
+//       |> int.sum()
+//     }
+//   }
+// }
 
-fn num_paths_to_out_cached(cache, graph, node) -> #(Int, dict.Dict(Atom, Int)) {
-  case dict.get(cache, node) {
-    Ok(n) -> #(n, cache)
-    Error(Nil) -> {
-      let paths_from_here = dict.get(graph, node) |> result.unwrap([])
-      let #(sum, cache) =
-        list.fold(paths_from_here, #(0, cache), fn(acc, next_node) {
-          let #(n, cache_acc) = acc
-          let #(extra_paths, new_cache) =
-            num_paths_to_out_cached(cache_acc, graph, next_node)
-          #(n + extra_paths, new_cache)
-        })
-      #(sum, dict.insert(cache, node, sum))
+// cool attempt, threading the dict cache between calls with list.fold()
+// fn num_paths_to_out_cached(cache, graph, node) -> #(Int, dict.Dict(Int, Int)) {
+//   case dict.get(cache, node) {
+//     Ok(n) -> #(n, cache)
+//     Error(Nil) -> {
+//       let paths_from_here = dict.get(graph, node) |> result.unwrap([])
+//       let #(sum, cache) =
+//         list.fold(paths_from_here, #(0, cache), fn(acc, next_node) {
+//           let #(n, cache_acc) = acc
+//           let #(extra_paths, new_cache) =
+//             num_paths_to_out_cached(cache_acc, graph, next_node)
+//           #(n + extra_paths, new_cache)
+//         })
+//       #(sum, dict.insert(cache, node, sum))
+//     }
+//   }
+// }
+
+fn num_paths_to_out_cached_atomic(cache, graph, node: Int) -> Int {
+  case atomic_array.get(cache, node) {
+    Ok(0) -> {
+      case node {
+        // str_id("out") == 7304564
+        7_304_564 -> 1
+        _ -> {
+          let paths_from_here = dict.get(graph, node) |> result.unwrap([])
+          let answer =
+            list.map(paths_from_here, fn(next_node) {
+              num_paths_to_out_cached_atomic(cache, graph, next_node)
+            })
+            |> int.sum
+          let _ = atomic_array.set(cache, node, answer)
+          answer
+        }
+      }
     }
+    Ok(n) -> n
+    Error(_) -> panic as "out of bounds"
   }
 }
 
 // with pair.first: about 1 ms. With `.0` to access the first part of the tuple:
 // about 150 µs
-pub fn pt_1(input: Graph) {
-  let start_cache = dict.new() |> dict.insert(atom.create("out"), 1)
-  num_paths_to_out_cached(start_cache, input, atom.create("you")).0
+pub fn pt_1(input: #(Graph, atomic_array.AtomicArray)) {
+  let #(graph, start_cache) = input
+  // let start_cache = dict.new() |> dict.insert(str_id("out"), 1)
+  // num_paths_to_out_cached(start_cache, input, str_id("you")).0
+  num_paths_to_out_cached_atomic(start_cache, graph, str_id("you"))
 }
+
+// echo str_id("out") == 7304564
+// echo str_id("dac") == 6578531
+// echo str_id("fft") == 6710900
 
 fn num_paths_to_out_via_dac_fft(
   cache,
   graph: Graph,
-  node: Atom,
+  node: Int,
   has_visited_dac,
   has_visited_fft,
-  dac_atom,
-  fft_atom,
-) -> #(Int, dict.Dict(#(Atom, Bool, Bool), Int)) {
+) -> #(Int, dict.Dict(#(Int, Bool, Bool), Int)) {
   case dict.get(cache, #(node, has_visited_dac, has_visited_fft)) {
     Ok(n) -> #(n, cache)
     Error(Nil) -> {
-      let new_has_visited_dac = has_visited_dac || node == dac_atom
-      let new_has_visited_fft = has_visited_fft || node == fft_atom
+      // str_id("dac") == 6578531
+      // str_id("fft") == 6710900
+      let new_has_visited_dac = has_visited_dac || node == 6_578_531
+      let new_has_visited_fft = has_visited_fft || node == 6_710_900
       let paths_from_here = case dict.get(graph, node) {
         Ok(v) -> v
         Error(Nil) -> []
@@ -86,8 +125,6 @@ fn num_paths_to_out_via_dac_fft(
               next_node,
               new_has_visited_dac,
               new_has_visited_fft,
-              dac_atom,
-              fft_atom,
             )
           #(n + extra_paths, new_cache)
         })
@@ -96,21 +133,51 @@ fn num_paths_to_out_via_dac_fft(
   }
 }
 
-pub fn pt_2(input: Graph) {
-  let start_cache =
-    dict.new() |> dict.insert(#(atom.create("out"), True, True), 1)
-  num_paths_to_out_via_dac_fft(
-    start_cache,
-    input,
-    atom.create("svr"),
-    False,
-    False,
-    atom.create("dac"),
-    atom.create("fft"),
-  ).0
+// node is a 24 bit int, so for the cache key we'll bitpack has_visited_dac into bit 26 and has_visited_fft into bit 28
+fn num_paths_to_out_via_dac_fft_atomic(
+  cache,
+  graph: Graph,
+  node: Int,
+  has_visited_dac: Int,
+  has_visited_fft: Int,
+) -> Int {
+  let cache_key =
+    int.bitwise_or(node, int.bitwise_or(has_visited_dac, has_visited_fft))
+  case atomic_array.get(cache, cache_key) {
+    Ok(0) -> {
+      // str_id("dac") == 6578531
+      let new_has_visited_dac = case node == 6_578_531 {
+        False -> has_visited_dac
+        True -> int.bitwise_shift_left(1, 26)
+      }
+      // str_id("fft") == 6710900
+      let new_has_visited_fft = case node == 6_710_900 {
+        False -> has_visited_fft
+        True -> int.bitwise_shift_left(1, 28)
+      }
+
+      let paths_from_here = dict.get(graph, node) |> result.unwrap([])
+      let answer =
+        list.map(paths_from_here, fn(next_node) {
+          num_paths_to_out_via_dac_fft_atomic(
+            cache,
+            graph,
+            next_node,
+            new_has_visited_dac,
+            new_has_visited_fft,
+          )
+        })
+        |> int.sum
+      let _ = atomic_array.set(cache, cache_key, answer)
+      answer
+    }
+    Ok(n) -> n
+    Error(_) -> panic as "out of bounds"
+  }
 }
-// this works but the ETS table for the rememo cache takes like 10 ms to spin up??
-// pub fn pt_2(input: Graph) {
-//   use cache <- memo.create()
-//   num_paths_to_out_memoized(cache, input, "svr", False, False)
-// }
+
+pub fn pt_2(input: #(Graph, atomic_array.AtomicArray)) {
+  let #(graph, _) = input
+  let start_cache = dict.new() |> dict.insert(#(str_id("out"), True, True), 1)
+  num_paths_to_out_via_dac_fft(start_cache, graph, str_id("svr"), False, False).0
+}
