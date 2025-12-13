@@ -3,6 +3,7 @@
 
 packages = [
   { name = "argv", version = "1.0.2", build_tools = ["gleam"], requirements = [], otp_app = "argv", source = "hex", outer_checksum = "BA1FF0929525DEBA1CE67256E5ADF77A7CDDFE729E3E3F57A5BDCAA031DED09D" },
+  { name = "atomic_array", version = "1.0.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "atomic_array", source = "hex", outer_checksum = "2B5D25F975D6E9A222E62077AD8F5A30A932606BCBC6F2869C7961D19BD0D4CE" },
   { name = "atto", version = "1.2.1", build_tools = ["gleam"], requirements = ["gleam_regexp", "gleam_stdlib"], otp_app = "atto", source = "hex", outer_checksum = "B42C769B523CFCCE004E08DF3128F1060CB1AD1E6363022D1BB995DF43BAC138" },
   { name = "child_process", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_otp", "gleam_stdlib", "splitter"], otp_app = "child_process", source = "hex", outer_checksum = "A4088E3D94072A7D9B810844FC52E1FBC3C554C3D1CEAA1BFBF0EF43873954F2" },
   { name = "envoy", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "envoy", source = "hex", outer_checksum = "850DA9D29D2E5987735872A2B5C81035146D7FE19EFC486129E44440D03FD832" },
@@ -40,6 +41,7 @@ packages = [
 ]
 
 [requirements]
+atomic_array = { version = ">= 1.0.0 and < 2.0.0" }
 atto = { version = ">= 1.2.1 and < 2.0.0" }
 child_process = { version = ">= 1.1.0 and < 2.0.0" }
 gladvent = { version = ">= 2.2.1 and < 3.0.0" }
