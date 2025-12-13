@@ -93,9 +93,9 @@ pub fn pt_1(input: #(Graph, atomic_array.AtomicArray)) {
   num_paths_to_out_cached_atomic(start_cache, graph, str_id("you"))
 }
 
-// echo str_id("out") == 7304564
-// echo str_id("dac") == 6578531
-// echo str_id("fft") == 6710900
+// str_id("out") == 7304564
+// str_id("dac") == 6578531
+// str_id("fft") == 6710900
 
 fn num_paths_to_out_via_dac_fft(
   cache,
@@ -133,49 +133,7 @@ fn num_paths_to_out_via_dac_fft(
   }
 }
 
-// node is a 24 bit int, so for the cache key we'll bitpack has_visited_dac into bit 26 and has_visited_fft into bit 28
-fn num_paths_to_out_via_dac_fft_atomic(
-  cache,
-  graph: Graph,
-  node: Int,
-  has_visited_dac: Int,
-  has_visited_fft: Int,
-) -> Int {
-  let cache_key =
-    int.bitwise_or(node, int.bitwise_or(has_visited_dac, has_visited_fft))
-  case atomic_array.get(cache, cache_key) {
-    Ok(0) -> {
-      // str_id("dac") == 6578531
-      let new_has_visited_dac = case node == 6_578_531 {
-        False -> has_visited_dac
-        True -> int.bitwise_shift_left(1, 26)
-      }
-      // str_id("fft") == 6710900
-      let new_has_visited_fft = case node == 6_710_900 {
-        False -> has_visited_fft
-        True -> int.bitwise_shift_left(1, 28)
-      }
-
-      let paths_from_here = dict.get(graph, node) |> result.unwrap([])
-      let answer =
-        list.map(paths_from_here, fn(next_node) {
-          num_paths_to_out_via_dac_fft_atomic(
-            cache,
-            graph,
-            next_node,
-            new_has_visited_dac,
-            new_has_visited_fft,
-          )
-        })
-        |> int.sum
-      let _ = atomic_array.set(cache, cache_key, answer)
-      answer
-    }
-    Ok(n) -> n
-    Error(_) -> panic as "out of bounds"
-  }
-}
-
+// after benchmarking, part 2 did not benefit from being rewritten to the atomic array variant
 pub fn pt_2(input: #(Graph, atomic_array.AtomicArray)) {
   let #(graph, _) = input
   let start_cache = dict.new() |> dict.insert(#(str_id("out"), True, True), 1)
